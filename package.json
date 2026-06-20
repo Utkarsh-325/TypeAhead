@@ -1,0 +1,18 @@
+{
+  "name": "search-typeahead-system",
+  "version": "1.0.0",
+  "description": "A high-performance search typeahead system with consistent hash caching, trending searches, and batch writes.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "import": "node scripts/import.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "sqlite3": "^5.1.7"
+  },
+  "author": "Antigravity Pair Programmer",
+  "license": "ISC"
+}
