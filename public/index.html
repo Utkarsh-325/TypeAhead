@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TypeAhead HLD | Distributed Autocomplete</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="glass-bg"></div>
+  
+  <div class="app-container">
+    <div class="main-card">
+      <!-- Main Header -->
+      <header class="app-header">
+        <h1 class="main-title">TypeAhead HLD</h1>
+        <p class="main-subtitle">Sharded autocomplete over 3 cache nodes via a consistent-hash load balancer.</p>
+      </header>
+
+      <!-- Search Area -->
+      <div class="search-section">
+        <div class="search-input-wrapper">
+          <input type="text" id="search-input" placeholder="Search the web..." autocomplete="off">
+        </div>
+        
+        <!-- Suggestions View (Visible when typing) -->
+        <div id="suggestions-container" class="suggestions-container hidden">
+          <ul id="suggestion-list"></ul>
+          <div id="suggestions-footer" class="suggestions-footer">0 suggestions - served by shard 1</div>
+        </div>
+
+        <!-- Trending Board View (Visible when search is empty/inactive) -->
+        <div id="trending-container" class="trending-container">
+          <h3 class="section-title">TRENDING RIGHT NOW</h3>
+          <div id="trending-list" class="trending-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Dummy Response Notification -->
+      <div id="search-response-panel" class="response-panel hidden">
+        <span class="response-close" id="response-close">×</span>
+        <strong>API Response:</strong> { "message": "Searched" }
+      </div>
+    </div>
+
+    <!-- Toggle HLD Diagnostics -->
+    <div class="toggle-container">
+      <button id="toggle-diagnostics-btn" class="toggle-btn">⚙️ Show Diagnostics Panel</button>
+    </div>
+
+    <!-- Collapsible Diagnostics Dashboard -->
+    <div id="diagnostics-panel" class="diagnostics-panel hidden">
+      <div class="diagnostics-grid">
+        
+        <!-- Live Metrics -->
+        <div class="diagnostics-card">
+          <h3>📊 Real-Time Metrics</h3>
+          <div class="stats-list">
+            <div class="stat-item">
+              <span>Read Latency (p50 / p95):</span>
+              <strong class="font-blue"><span id="p50-val">0</span>ms / <span id="p95-val">0</span>ms</strong>
+            </div>
+            <div class="stat-item">
+              <span>Global Hit Rate:</span>
+              <strong class="font-green" id="hitrate-val">0%</strong>
+            </div>
+            <div class="stat-item">
+              <span>DB Writes Saved:</span>
+              <strong class="font-amber"><span id="writes-saved-val">0</span> (<span id="reduction-val">0%</span>)</strong>
+            </div>
+            <div class="stat-item">
+              <span>Buffered Submissions:</span>
+              <strong id="buffer-val">0</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cache Node Shard Status -->
+        <div class="diagnostics-card">
+          <h3>🌐 Cache Shard Partitioning</h3>
+          <div id="nodes-list" class="nodes-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Cache Debugger Console -->
+        <div class="diagnostics-card debug-console">
+          <h3>🔍 Consistent Hash Debug Console</h3>
+          <div class="debug-input-row">
+            <input type="text" id="debug-prefix-input" placeholder="Type key prefix (e.g. iphone)...">
+            <button id="debug-btn">Route</button>
+          </div>
+          <div id="debug-result" class="debug-result hidden">
+            <p><strong>Ring Node:</strong> <span class="tag" id="debug-node"></span></p>
+            <p><strong>Hash:</strong> <code id="debug-hash"></code></p>
+            <p><strong>Status:</strong> <span id="debug-cached"></span></p>
+          </div>
+        </div>
+
+        <!-- Config Control panel -->
+        <div class="diagnostics-card config-panel">
+          <h3>⚙️ Engine Parameters</h3>
+          <form id="config-form">
+            <div class="form-row">
+              <label>Ranking Mode:</label>
+              <select id="ranking-mode">
+                <option value="basic">Basic (Popularity)</option>
+                <option value="enhanced" selected>Enhanced (Recency-Aware)</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>Flush Delay (ms):</label>
+              <input type="number" id="batch-interval" value="5000" min="500">
+            </div>
+            <div class="form-row">
+              <label>Batch Size Limit:</label>
+              <input type="number" id="batch-limit" value="50" min="1">
+            </div>
+            <button type="submit" class="apply-btn">Apply Settings</button>
+          </form>
+          <div class="quick-actions">
+            <button id="action-flush" class="btn-action">⚡ Flush Buffer</button>
+            <button id="action-clear-cache" class="btn-action">🗑️ Clear Cache</button>
+            <button id="action-load-test" class="btn-action">📈 Simulate 100 Searches</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <p>TypeAhead High Level Design | Consitent Hashing & Batch Writing System</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
